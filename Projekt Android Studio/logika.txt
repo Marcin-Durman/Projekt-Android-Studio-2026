@@ -1,0 +1,698 @@
+package com.example.myapplication;
+
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.SharedPreferences;
+import android.graphics.drawable.GradientDrawable;
+import android.os.Bundle;
+import android.os.Handler;
+import android.view.Gravity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.CalendarView;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.TimePicker;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+public class MainActivity extends AppCompatActivity {
+
+    // Ekrany
+    FrameLayout ekran1;
+    LinearLayout ekran2, ekran3, ekran4;
+
+    Button btn1, btn2, btn3, btn4;
+
+    // Notatnik
+    LinearLayout panelListaNotatek, panelEdycjiNotatki, listaNotatek;
+    Button btnDodajNotatke, btnZapiszNotatke, btnZamknijNotatke;
+    EditText editTytulNotatki, editTrescNotatki;
+    JSONArray notatki;
+    int edytowanaNotatkaIndex = -1;
+
+    // Kalkulator
+    TextView txtWyswietlacz;
+    Button btn0, btn1cyfra, btn2cyfra, btn3cyfra, btn4cyfra,
+            btn5, btn6, btn7, btn8, btn9;
+    Button btnPlus, btnMinus, btnMnoz, btnDziel, btnRownaSie, btnC;
+    String aktualnaLiczba = "";
+    double pierwszaLiczba = 0;
+    String operator = "";
+
+    // Kalendarz
+    CalendarView calendarView;
+    LinearLayout listaZadanKalendarza;
+    JSONArray wydarzenia;
+
+    // ZEGAR
+    TextView txtDuzaGodzina, txtAlarmKomunikat;
+    Button btnCzasomierz, btnAlarm;
+
+    // Czasomierz
+    boolean czasomierzWlaczony = false;
+    long czasomierzStart = 0;
+    Handler handlerCzasomierz = new Handler();
+
+    // Alarm
+    boolean alarmWlaczony = false;
+    long alarmDoCzasu = 0;
+    Handler handlerAlarm = new Handler();
+
+    SharedPreferences prefs;
+
+    @SuppressLint("WrongViewCast")
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        // Ekrany
+        ekran1 = findViewById(R.id.ekran1);
+        ekran2 = findViewById(R.id.ekran2);
+        ekran3 = findViewById(R.id.ekran3);
+        ekran4 = findViewById(R.id.ekran4);
+
+        btn1 = findViewById(R.id.btn1);
+        btn2 = findViewById(R.id.btn2);
+        btn3 = findViewById(R.id.btn3);
+        btn4 = findViewById(R.id.btn4);
+
+        btn1.setOnClickListener(v -> show(1));
+        btn2.setOnClickListener(v -> show(2));
+        btn3.setOnClickListener(v -> show(3));
+        btn4.setOnClickListener(v -> show(4));
+
+        // Notatnik
+        panelListaNotatek = findViewById(R.id.panelListaNotatek);
+        panelEdycjiNotatki = findViewById(R.id.panelEdycjiNotatki);
+        listaNotatek = findViewById(R.id.listaNotatek);
+
+        btnDodajNotatke = findViewById(R.id.btnDodajNotatke);
+        btnZapiszNotatke = findViewById(R.id.btnZapiszNotatke);
+        btnZamknijNotatke = findViewById(R.id.btnZamknijNotatke);
+
+        editTytulNotatki = findViewById(R.id.editTytulNotatki);
+        editTrescNotatki = findViewById(R.id.editTrescNotatki);
+
+        prefs = getSharedPreferences("NOTATKI_APP", MODE_PRIVATE);
+
+        wczytajNotatki();
+
+        btnDodajNotatke.setOnClickListener(v -> otworzNowaNotatke());
+        btnZamknijNotatke.setOnClickListener(v -> pokazListe());
+        btnZapiszNotatke.setOnClickListener(v -> zapiszNotatke());
+
+        // Kalkulator
+        txtWyswietlacz = findViewById(R.id.txtWyswietlacz);
+
+        btn0 = findViewById(R.id.btn0);
+        btn1cyfra = findViewById(R.id.btn1cyfra);
+        btn2cyfra = findViewById(R.id.btn2cyfra);
+        btn3cyfra = findViewById(R.id.btn3cyfra);
+        btn4cyfra = findViewById(R.id.btn4cyfra);
+        btn5 = findViewById(R.id.btn5);
+        btn6 = findViewById(R.id.btn6);
+        btn7 = findViewById(R.id.btn7);
+        btn8 = findViewById(R.id.btn8);
+        btn9 = findViewById(R.id.btn9);
+
+        btnPlus = findViewById(R.id.btnPlus);
+        btnMinus = findViewById(R.id.btnMinus);
+        btnMnoz = findViewById(R.id.btnMnoz);
+        btnDziel = findViewById(R.id.btnDziel);
+        btnRownaSie = findViewById(R.id.btnRownaSie);
+        btnC = findViewById(R.id.btnC);
+
+        btn0.setOnClickListener(v -> dodajCyfre("0"));
+        btn1cyfra.setOnClickListener(v -> dodajCyfre("1"));
+        btn2cyfra.setOnClickListener(v -> dodajCyfre("2"));
+        btn3cyfra.setOnClickListener(v -> dodajCyfre("3"));
+        btn4cyfra.setOnClickListener(v -> dodajCyfre("4"));
+        btn5.setOnClickListener(v -> dodajCyfre("5"));
+        btn6.setOnClickListener(v -> dodajCyfre("6"));
+        btn7.setOnClickListener(v -> dodajCyfre("7"));
+        btn8.setOnClickListener(v -> dodajCyfre("8"));
+        btn9.setOnClickListener(v -> dodajCyfre("9"));
+
+        btnPlus.setOnClickListener(v -> ustawOperator("+"));
+        btnMinus.setOnClickListener(v -> ustawOperator("-"));
+        btnMnoz.setOnClickListener(v -> ustawOperator("*"));
+        btnDziel.setOnClickListener(v -> ustawOperator("/"));
+
+        btnC.setOnClickListener(v -> {
+            aktualnaLiczba = "";
+            operator = "";
+            pierwszaLiczba = 0;
+            txtWyswietlacz.setText("0");
+        });
+
+        btnRownaSie.setOnClickListener(v -> {
+            if (aktualnaLiczba.isEmpty()) return;
+
+            double druga = Double.parseDouble(aktualnaLiczba);
+            double wynik = 0;
+
+            switch (operator) {
+                case "+":
+                    wynik = pierwszaLiczba + druga;
+                    break;
+                case "-":
+                    wynik = pierwszaLiczba - druga;
+                    break;
+                case "*":
+                    wynik = pierwszaLiczba * druga;
+                    break;
+                case "/":
+                    if (druga == 0) {
+                        txtWyswietlacz.setText("Błąd");
+                        return;
+                    }
+                    wynik = pierwszaLiczba / druga;
+                    break;
+            }
+
+            txtWyswietlacz.setText(String.valueOf(wynik));
+            aktualnaLiczba = String.valueOf(wynik);
+        });
+
+        // KALENDARZ
+        calendarView = findViewById(R.id.calendarView);
+        listaZadanKalendarza = findViewById(R.id.listaZadanKalendarza);
+
+        wczytajWydarzenia();
+
+        calendarView.setOnDateChangeListener((view, year, month, dayOfMonth) -> {
+            Calendar c = Calendar.getInstance();
+            c.set(Calendar.YEAR, year);
+            c.set(Calendar.MONTH, month);
+            c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            c.set(Calendar.HOUR_OF_DAY, 0);
+            c.set(Calendar.MINUTE, 0);
+            c.set(Calendar.SECOND, 0);
+            c.set(Calendar.MILLISECOND, 0);
+
+            long dataMillis = c.getTimeInMillis();
+            otworzOknoNoweWydarzenie(dataMillis);
+        });
+
+        // ZEGAR
+        txtDuzaGodzina = findViewById(R.id.txtDuzaGodzina);
+        txtAlarmKomunikat = findViewById(R.id.txtAlarmKomunikat);
+        btnCzasomierz = findViewById(R.id.btnCzasomierz);
+        btnAlarm = findViewById(R.id.btnAlarm);
+
+        // Aktualizacja godziny
+        Handler handler = new Handler();
+        Runnable aktualizujGodzine = new Runnable() {
+            @Override
+            public void run() {
+                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                txtDuzaGodzina.setText(sdf.format(new Date()));
+                handler.postDelayed(this, 1000);
+            }
+        };
+        handler.post(aktualizujGodzine);
+
+        inicjalizujZegar();
+
+    }
+
+
+    // Aktualizacja czasomierza
+    Runnable aktualizujCzasomierz = new Runnable() {
+        @Override
+        public void run() {
+            if (czasomierzWlaczony) {
+                long teraz = System.currentTimeMillis();
+                long roznica = teraz - czasomierzStart;
+
+                long sekundy = roznica / 1000;
+                long minuty = sekundy / 60;
+                long godziny = minuty / 60;
+
+                sekundy %= 60;
+                minuty %= 60;
+
+                txtAlarmKomunikat.setVisibility(View.VISIBLE);
+                txtAlarmKomunikat.setText(String.format("%02d:%02d:%02d", godziny, minuty, sekundy));
+
+                handlerCzasomierz.postDelayed(this, 1000);
+            }
+        }
+    };
+
+    // Aktualizacja alarmu
+    Runnable aktualizujAlarm = new Runnable() {
+        @Override
+        public void run() {
+            if (alarmWlaczony) {
+                long teraz = System.currentTimeMillis();
+                long roznica = alarmDoCzasu - teraz;
+
+                if (roznica <= 0) {
+                    alarmWlaczony = false;
+                    txtAlarmKomunikat.setVisibility(View.VISIBLE);
+                    txtAlarmKomunikat.setText("ALARM!");
+                    return;
+                }
+
+                long sekundy = roznica / 1000;
+                long minuty = sekundy / 60;
+                long godziny = minuty / 60;
+
+                sekundy %= 60;
+                minuty %= 60;
+
+                txtAlarmKomunikat.setVisibility(View.VISIBLE);
+                txtAlarmKomunikat.setText(String.format("Pozostało: %02d:%02d:%02d", godziny, minuty, sekundy));
+
+                handlerAlarm.postDelayed(this, 1000);
+            }
+        }
+    };
+
+    //  ZEGAR
+    void inicjalizujZegar() {
+
+        // CZASOMIERZ
+        btnCzasomierz.setOnClickListener(v -> {
+            if (!czasomierzWlaczony) {
+                czasomierzWlaczony = true;
+                czasomierzStart = System.currentTimeMillis();
+                txtAlarmKomunikat.setVisibility(View.VISIBLE);
+                txtAlarmKomunikat.setText("00:00:00");
+                handlerCzasomierz.post(aktualizujCzasomierz);
+                btnCzasomierz.setText("Stop");
+            } else {
+                czasomierzWlaczony = false;
+                btnCzasomierz.setText("Czasomierz");
+            }
+        });
+
+        // ALARM
+        btnAlarm.setOnClickListener(v -> {
+            TimePicker tp = new TimePicker(this);
+            tp.setIs24HourView(true);
+
+            new AlertDialog.Builder(this)
+                    .setTitle("Ustaw godzinę alarmu")
+                    .setView(tp)
+                    .setPositiveButton("Ustaw", (d, w) -> {
+                        int godz = tp.getHour();
+                        int min = tp.getMinute();
+
+                        Calendar cal = Calendar.getInstance();
+                        cal.set(Calendar.HOUR_OF_DAY, godz);
+                        cal.set(Calendar.MINUTE, min);
+                        cal.set(Calendar.SECOND, 0);
+                        cal.set(Calendar.MILLISECOND, 0);
+
+                        long cel = cal.getTimeInMillis();
+                        long teraz = System.currentTimeMillis();
+
+                        if (cel <= teraz) {
+                            cel += 24 * 60 * 60 * 1000;
+                        }
+
+                        alarmDoCzasu = cel;
+                        alarmWlaczony = true;
+
+                        txtAlarmKomunikat.setVisibility(View.VISIBLE);
+                        txtAlarmKomunikat.setText("Odliczanie...");
+
+                        handlerAlarm.post(aktualizujAlarm);
+                    })
+                    .setNegativeButton("Anuluj", null)
+                    .show();
+        });
+    }
+
+
+    //NOTATNIK
+
+    void otworzNowaNotatke() {
+        edytowanaNotatkaIndex = -1;
+        editTytulNotatki.setText("");
+        editTrescNotatki.setText("");
+        panelListaNotatek.setVisibility(View.GONE);
+        panelEdycjiNotatki.setVisibility(View.VISIBLE);
+    }
+
+    void pokazListe() {
+        panelEdycjiNotatki.setVisibility(View.GONE);
+        panelListaNotatek.setVisibility(View.VISIBLE);
+        renderujListeNotatek();
+    }
+
+    void zapiszNotatke() {
+        try {
+            JSONObject n = new JSONObject();
+            n.put("tytul", editTytulNotatki.getText().toString());
+            n.put("tresc", editTrescNotatki.getText().toString());
+
+            if (edytowanaNotatkaIndex == -1) notatki.put(n);
+            else notatki.put(edytowanaNotatkaIndex, n);
+
+            prefs.edit().putString("dane", notatki.toString()).apply();
+            Toast.makeText(this, "Zapisano notatkę", Toast.LENGTH_SHORT).show();
+            pokazListe();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    void wczytajNotatki() {
+        try {
+            String dane = prefs.getString("dane", "[]");
+            notatki = new JSONArray(dane);
+        } catch (Exception e) {
+            prefs.edit().putString("dane", "[]").apply();
+            notatki = new JSONArray();
+        }
+        renderujListeNotatek();
+    }
+
+    void renderujListeNotatek() {
+        listaNotatek.removeAllViews();
+        for (int i = notatki.length() - 1; i >= 0; i--) {
+            try {
+                JSONObject n = notatki.getJSONObject(i);
+
+                GradientDrawable ramka = new GradientDrawable();
+                ramka.setColor(0xFFFFFFFF);
+                ramka.setCornerRadius(40);
+                ramka.setStroke(4, 0xFFBBBBBB);
+
+                LinearLayout item = new LinearLayout(this);
+                item.setOrientation(LinearLayout.HORIZONTAL);
+                item.setBackground(ramka);
+                item.setPadding(30, 30, 30, 30);
+                item.setGravity(Gravity.CENTER_VERTICAL);
+
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                        LinearLayout.LayoutParams.MATCH_PARENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT
+                );
+                params.setMargins(10, 10, 10, 10);
+                item.setLayoutParams(params);
+
+                TextView tytul = new TextView(this);
+                String t = n.optString("tytul", "");
+                if (t.isEmpty()) t = "Brak tytułu";
+                tytul.setText(t);
+                tytul.setTextSize(22);
+                tytul.setPadding(10, 10, 10, 10);
+
+                View rozpychacz = new View(this);
+                rozpychacz.setLayoutParams(new LinearLayout.LayoutParams(
+                        0, LinearLayout.LayoutParams.WRAP_CONTENT, 1
+                ));
+
+                Button usun = new Button(this);
+                usun.setText("Usuń");
+                usun.setTextSize(12);
+
+                GradientDrawable stylUsun = new GradientDrawable();
+                stylUsun.setColor(0xFFE57373);
+                stylUsun.setCornerRadius(35);
+                usun.setBackground(stylUsun);
+                usun.setTextColor(0xFFFFFFFF);
+
+                int index = i;
+
+                item.setOnClickListener(v -> {
+                    edytowanaNotatkaIndex = index;
+                    try {
+                        JSONObject nn = notatki.getJSONObject(index);
+                        editTytulNotatki.setText(nn.optString("tytul"));
+                        editTrescNotatki.setText(nn.optString("tresc"));
+                    } catch (Exception ignored) {}
+                    panelListaNotatek.setVisibility(View.GONE);
+                    panelEdycjiNotatki.setVisibility(View.VISIBLE);
+                });
+
+                usun.setOnClickListener(v -> {
+                    new AlertDialog.Builder(this)
+                            .setTitle("Usuń notatkę?")
+                            .setPositiveButton("Usuń", (d, w) -> {
+                                notatki.remove(index);
+                                prefs.edit().putString("dane", notatki.toString()).apply();
+                                renderujListeNotatek();
+                            })
+                            .setNegativeButton("Anuluj", null)
+                            .show();
+                });
+
+                item.addView(tytul);
+                item.addView(rozpychacz);
+                item.addView(usun);
+                listaNotatek.addView(item);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    //KALKULATOR
+    void dodajCyfre(String c) {
+        aktualnaLiczba += c;
+        txtWyswietlacz.setText(aktualnaLiczba);
+    }
+
+    void ustawOperator(String op) {
+        if (aktualnaLiczba.isEmpty()) return;
+        pierwszaLiczba = Double.parseDouble(aktualnaLiczba);
+        operator = op;
+        aktualnaLiczba = "";
+        txtWyswietlacz.setText(op);
+    }
+
+
+    // KALENDARZ
+
+    void wczytajWydarzenia() {
+        try {
+            String dane = prefs.getString("wydarzenia", "[]");
+            wydarzenia = new JSONArray(dane);
+        } catch (Exception e) {
+            prefs.edit().putString("wydarzenia", "[]").apply();
+            wydarzenia = new JSONArray();
+        }
+        renderujListeZadanKalendarza();
+    }
+
+    void otworzOknoNoweWydarzenie(long dataMillis) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Nowe wydarzenie");
+
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(40, 30, 40, 10);
+
+        EditText editTytul = new EditText(this);
+        editTytul.setHint("Tytuł");
+        layout.addView(editTytul);
+
+        EditText editOpis = new EditText(this);
+        editOpis.setHint("Opis");
+        layout.addView(editOpis);
+
+        TimePicker timePicker = new TimePicker(this);
+        timePicker.setIs24HourView(true);
+        layout.addView(timePicker);
+
+        builder.setView(layout);
+
+        builder.setPositiveButton("Zapisz", (dialog, which) -> {
+            try {
+                int godzina = timePicker.getHour();
+                int minuta = timePicker.getMinute();
+
+                JSONObject w = new JSONObject();
+                w.put("data", dataMillis);
+                w.put("godzina", godzina);
+                w.put("minuta", minuta);
+                w.put("tytul", editTytul.getText().toString());
+                w.put("opis", editOpis.getText().toString());
+
+                wydarzenia.put(w);
+                prefs.edit().putString("wydarzenia", wydarzenia.toString()).apply();
+                renderujListeZadanKalendarza();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        builder.setNegativeButton("Anuluj", null);
+        builder.show();
+    }
+
+    void renderujListeZadanKalendarza() {
+        listaZadanKalendarza.removeAllViews();
+
+        long teraz = System.currentTimeMillis();
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(teraz);
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        long dzisMillis = c.getTimeInMillis();
+
+        JSONArray posortowane = new JSONArray();
+
+        try {
+            class W {
+                JSONObject obj;
+                long dni;
+            }
+            java.util.List<W> lista = new java.util.ArrayList<>();
+
+            for (int i = 0; i < wydarzenia.length(); i++) {
+                JSONObject w = wydarzenia.getJSONObject(i);
+                long data = w.optLong("data", dzisMillis);
+                long roznicaMillis = data - dzisMillis;
+                long dni = roznicaMillis / (1000 * 60 * 60 * 24);
+
+                W wrap = new W();
+                wrap.obj = w;
+                wrap.dni = dni;
+                lista.add(wrap);
+            }
+
+            lista.sort((a, b) -> Long.compare(a.dni, b.dni));
+            for (W w : lista) posortowane.put(w.obj);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            posortowane = wydarzenia;
+        }
+
+        for (int i = 0; i < posortowane.length(); i++) {
+            try {
+                JSONObject w = posortowane.getJSONObject(i);
+
+                long data = w.optLong("data", dzisMillis);
+                int godzina = w.optInt("godzina", 0);
+                int minuta = w.optInt("minuta", 0);
+                String tytul = w.optString("tytul", "Brak tytułu");
+                String opis = w.optString("opis", "");
+
+                long roznicaMillis = data - dzisMillis;
+                long dni = roznicaMillis / (1000 * 60 * 60 * 24);
+
+                String status;
+                if (dni < 0) status = "Po terminie";
+                else if (dni == 0) status = "Dzisiaj";
+                else if (dni == 1) status = "1 dzień";
+                else status = dni + " dni";
+
+                int kolorTla;
+                if (dni < 0) kolorTla = 0xFF757575;
+                else if (dni <= 1) kolorTla = 0xFFFFCDD2;
+                else if (dni <= 3) kolorTla = 0xFFFFF9C4;
+                else kolorTla = 0xFFC8E6C9;
+
+                GradientDrawable ramka = new GradientDrawable();
+                ramka.setColor(kolorTla);
+                ramka.setCornerRadius(30);
+                ramka.setStroke(3, 0xFFBBBBBB);
+
+                LinearLayout item = new LinearLayout(this);
+                item.setOrientation(LinearLayout.VERTICAL);
+                item.setBackground(ramka);
+                item.setPadding(20, 20, 20, 20);
+
+                LinearLayout wierszGora = new LinearLayout(this);
+                wierszGora.setOrientation(LinearLayout.HORIZONTAL);
+
+                TextView txtTytul = new TextView(this);
+                txtTytul.setText(String.format("%02d:%02d  %s", godzina, minuta, tytul));
+                txtTytul.setTextSize(18);
+
+                View rozpychacz = new View(this);
+                rozpychacz.setLayoutParams(new LinearLayout.LayoutParams(
+                        0, LinearLayout.LayoutParams.WRAP_CONTENT, 1
+                ));
+
+                TextView txtStatus = new TextView(this);
+                txtStatus.setText(status);
+                txtStatus.setTextSize(16);
+
+                wierszGora.addView(txtTytul);
+                wierszGora.addView(rozpychacz);
+                wierszGora.addView(txtStatus);
+
+                item.addView(wierszGora);
+
+                if (!opis.isEmpty()) {
+                    TextView txtOpis = new TextView(this);
+                    txtOpis.setText(opis);
+                    txtOpis.setTextSize(14);
+                    txtOpis.setPadding(0, 10, 0, 0);
+                    item.addView(txtOpis);
+                }
+
+                final JSONObject doUsuniecia = w;
+
+                item.setOnClickListener(v -> {
+                    new AlertDialog.Builder(this)
+                            .setTitle("Usuń aktywność?")
+                            .setMessage("Czy na pewno chcesz usunąć to wydarzenie?")
+                            .setPositiveButton("Usuń", (dialog, which) -> {
+                                try {
+                                    for (int j = 0; j < wydarzenia.length(); j++) {
+                                        if (wydarzenia.getJSONObject(j).toString().equals(doUsuniecia.toString())) {
+                                            wydarzenia.remove(j);
+                                            break;
+                                        }
+                                    }
+
+                                    prefs.edit().putString("wydarzenia", wydarzenia.toString()).apply();
+                                    renderujListeZadanKalendarza();
+                                    Toast.makeText(this, "Wydarzenie usunięte", Toast.LENGTH_SHORT).show();
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            })
+                            .setNegativeButton("Anuluj", null)
+                            .show();
+                });
+
+                listaZadanKalendarza.addView(item);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // WIDOCZNOSC EKRANÓW
+
+    private void show(int s) {
+        ekran1.setVisibility(View.GONE);
+        ekran2.setVisibility(View.GONE);
+        ekran3.setVisibility(View.GONE);
+        ekran4.setVisibility(View.GONE);
+
+        if (s == 1) ekran1.setVisibility(View.VISIBLE);
+        if (s == 2) ekran2.setVisibility(View.VISIBLE);
+        if (s == 3) ekran3.setVisibility(View.VISIBLE);
+        if (s == 4) ekran4.setVisibility(View.VISIBLE);
+    }
+}
+

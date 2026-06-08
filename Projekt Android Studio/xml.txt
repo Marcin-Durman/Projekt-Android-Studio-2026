@@ -1,0 +1,392 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- EKRAN 1 - NOTATNIK -->
+    <FrameLayout
+        android:id="@+id/ekran1"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="visible"
+        android:background="#E4D4FA">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                android:id="@+id/headerNotatnik"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Notatnik"
+                android:textSize="48sp"
+                android:textStyle="bold"
+                android:textColor="#3A0A52"
+                android:gravity="center"
+                android:layout_marginBottom="30dp" />
+
+            <LinearLayout
+                android:id="@+id/panelListaNotatek"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="12dp"
+                android:background="#D3BDF7">
+
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1">
+
+                    <LinearLayout
+                        android:id="@+id/listaNotatek"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="10dp"
+                        android:background="#C5A7F3" />
+
+                </ScrollView>
+
+                <Button
+                    android:id="@+id/btnDodajNotatke"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:layout_marginTop="10dp"
+                    android:text="Dodaj notatkę"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:backgroundTint="#7A12A8" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/panelEdycjiNotatki"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:padding="12dp"
+                android:background="#D3BDF7">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/btnZapiszNotatke"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:text="Zapisz"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp"
+                        android:backgroundTint="#7A12A8" />
+
+                    <Button
+                        android:id="@+id/btnZamknijNotatke"
+                        android:layout_width="60dp"
+                        android:layout_height="match_parent"
+                        android:text="X"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp"
+                        android:backgroundTint="#5A0E7A" />
+
+                </LinearLayout>
+
+                <EditText
+                    android:id="@+id/editTytulNotatki"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Tytuł notatki"
+                    android:textSize="20sp"
+                    android:background="#FFFFFF"
+                    android:padding="10dp"
+                    android:textColor="#3A0A52" />
+
+                <EditText
+                    android:id="@+id/editTrescNotatki"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="top"
+                    android:hint="Treść notatki"
+                    android:inputType="textMultiLine"
+                    android:minLines="15"
+                    android:background="#FFFFFF"
+                    android:padding="10dp"
+                    android:textColor="#3A0A52" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <!-- EKRAN 2 - KALENDARZ -->
+    <LinearLayout
+        android:id="@+id/ekran2"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:padding="20dp"
+        android:background="#F5F5F5">
+
+        <TextView
+            android:id="@+id/headerKalendarz"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Kalendarz"
+            android:textSize="48sp"
+            android:textStyle="bold"
+            android:textColor="#424242"
+            android:gravity="center"
+            android:layout_marginBottom="30dp" />
+
+        <CalendarView
+            android:id="@+id/calendarView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#E0E0E0"
+            android:layout_marginBottom="20dp" />
+
+        <TextView
+            android:id="@+id/txtNaglowekZadan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Wszystkie zadania:"
+            android:textSize="22sp"
+            android:textColor="#424242"
+            android:padding="6dp" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <LinearLayout
+                android:id="@+id/listaZadanKalendarza"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:background="#E0E0E0" />
+
+        </ScrollView>
+
+    </LinearLayout>
+
+    <!-- EKRAN 3 — ZEGAR -->
+    <LinearLayout
+        android:id="@+id/ekran3"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:padding="20dp"
+        android:visibility="gone"
+        android:background="#E3F2FD">
+
+        <TextView
+            android:id="@+id/headerZegar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Zegar"
+            android:textSize="48sp"
+            android:textStyle="bold"
+            android:textColor="#0D47A1"
+            android:gravity="center"
+            android:layout_marginBottom="30dp" />
+
+        <TextView
+            android:id="@+id/txtDuzaGodzina"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="12:00"
+            android:textSize="90sp"
+            android:textStyle="bold"
+            android:textColor="#0D47A1"
+            android:layout_marginBottom="60dp" />
+
+        <Button
+            android:id="@+id/btnCzasomierz"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:text="Czasomierz"
+            android:textSize="22sp"
+            android:backgroundTint="#1976D2"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="35dp"
+            android:padding="10dp" />
+
+        <Button
+            android:id="@+id/btnAlarm"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:text="Alarm"
+            android:textSize="22sp"
+            android:backgroundTint="#0D47A1"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="20dp"
+            android:padding="10dp" />
+
+        <TextView
+            android:id="@+id/txtAlarmKomunikat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ALARM!"
+            android:textSize="40sp"
+            android:textStyle="bold"
+            android:textColor="#D32F2F"
+            android:layout_marginTop="40dp"
+            android:visibility="gone" />
+
+    </LinearLayout>
+
+    <!-- EKRAN 4 - KALKULATOR -->
+    <LinearLayout
+        android:id="@+id/ekran4"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:visibility="gone"
+        android:background="#E3F6E3">
+
+        <TextView
+            android:id="@+id/txtNaglowekKalkulator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Kalkulator"
+            android:textSize="48sp"
+            android:textStyle="bold"
+            android:textColor="#1B5E20"
+            android:gravity="center"
+            android:layout_marginBottom="30dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="320dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp"
+                android:background="#A5D6A7">
+
+                <TextView
+                    android:id="@+id/txtWyswietlacz"
+                    android:layout_width="match_parent"
+                    android:layout_height="90dp"
+                    android:background="#FFFFFF"
+                    android:gravity="end|center_vertical"
+                    android:padding="12dp"
+                    android:text="0"
+                    android:textSize="36sp"
+                    android:textColor="#1B5E20" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp">
+
+                    <Button android:id="@+id/btn7" android:layout_width="0dp" android:layout_height="60dp" android:layout_weight="1" android:layout_margin="3dp" android:text="7" android:textSize="18sp" android:textColor="#FFFFFF" android:backgroundTint="#2E7D32"/>
+                    <Button android:id="@+id/btn8" android:layout_width="0dp" android:layout_height="60dp" android:layout_weight="1" android:layout_margin="3dp" android:text="8" android:textSize="18sp" android:textColor="#FFFFFF" android:backgroundTint="#2E7D32"/>
+                    <Button android:id="@+id/btn9" android:layout_width="0dp" android:layout_height="60dp" android:layout_weight="1" android:layout_margin="3dp" android:text="9" android:textSize="18sp" android:textColor="#FFFFFF" android:backgroundTint="#2E7D32"/>
+                    <Button android:id="@+id/btnDziel" android:layout_width="0dp" android:layout_height="60dp" android:layout_weight="1" android:layout_margin="3dp" android:text="/" android:textSize="18sp" android:textColor="#FFFFFF" android:backgroundTint="#2E7D32"/>
+
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+                    <Button android:id="@+id/btn4cyfra" android:layout_width="0dp" android:layout_height="60dp" android:layout_weight="1" android:layout_margin="3dp" android:text="4" android:textSize="18sp" android:textColor="#FFFFFF" android:backgroundTint="#2E7D32"/>
+                    <Button android:id="@+id/btn5" android:layout_width="0dp" android:layout_height="60dp" android:layout_weight="1" android:layout_margin="3dp" android:text="5" android:textSize="18sp" android:textColor="#FFFFFF" android:backgroundTint="#2E7D32"/>
+                    <Button android:id="@+id/btn6" android:layout_width="0dp" android:layout_height="60dp" android:layout_weight="1" android:layout_margin="3dp" android:text="6" android:textSize="18sp" android:textColor="#FFFFFF" android:backgroundTint="#2E7D32"/>
+                    <Button android:id="@+id/btnMnoz" android:layout_width="0dp" android:layout_height="60dp" android:layout_weight="1" android:layout_margin="3dp" android:text="*" android:textSize="18sp" android:textColor="#FFFFFF" android:backgroundTint="#2E7D32"/>
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+                    <Button android:id="@+id/btn1cyfra" android:layout_width="0dp" android:layout_height="60dp" android:layout_weight="1" android:layout_margin="3dp" android:text="1" android:textSize="18sp" android:textColor="#FFFFFF" android:backgroundTint="#2E7D32"/>
+                    <Button android:id="@+id/btn2cyfra" android:layout_width="0dp" android:layout_height="60dp" android:layout_weight="1" android:layout_margin="3dp" android:text="2" android:textSize="18sp" android:textColor="#FFFFFF" android:backgroundTint="#2E7D32"/>
+                    <Button android:id="@+id/btn3cyfra" android:layout_width="0dp" android:layout_height="60dp" android:layout_weight="1" android:layout_margin="3dp" android:text="3" android:textSize="18sp" android:textColor="#FFFFFF" android:backgroundTint="#2E7D32"/>
+                    <Button android:id="@+id/btnMinus" android:layout_width="0dp" android:layout_height="60dp" android:layout_weight="1" android:layout_margin="3dp" android:text="-" android:textSize="18sp" android:textColor="#FFFFFF" android:backgroundTint="#2E7D32"/>
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+                    <Button android:id="@+id/btnC" android:layout_width="0dp" android:layout_height="60dp" android:layout_weight="1" android:layout_margin="3dp" android:text="C" android:textSize="18sp" android:textColor="#FFFFFF" android:backgroundTint="#2E7D32"/>
+                    <Button android:id="@+id/btn0" android:layout_width="0dp" android:layout_height="60dp" android:layout_weight="1" android:layout_margin="3dp" android:text="0" android:textSize="18sp" android:textColor="#FFFFFF" android:backgroundTint="#2E7D32"/>
+                    <Button android:id="@+id/btnRownaSie" android:layout_width="0dp" android:layout_height="60dp" android:layout_weight="1" android:layout_margin="3dp" android:text="=" android:textSize="18sp" android:textColor="#FFFFFF" android:backgroundTint="#2E7D32"/>
+                    <Button android:id="@+id/btnPlus" android:layout_width="0dp" android:layout_height="60dp" android:layout_weight="1" android:layout_margin="3dp" android:text="+" android:textSize="18sp" android:textColor="#FFFFFF" android:backgroundTint="#2E7D32"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- MENU  -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:orientation="horizontal"
+        android:background="#E0E0E0">
+
+        <Button
+            android:id="@+id/btn1"
+            android:text="Notatnik"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:backgroundTint="#7A12A8" />
+
+        <Button
+            android:id="@+id/btn2"
+            android:text="Kalendarz"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textColor="#FFFFFF"
+            android:textSize="11sp"
+            android:backgroundTint="#424242" />
+
+        <Button
+            android:id="@+id/btn3"
+            android:text="Zegar"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:backgroundTint="#0D47A1" />
+
+        <Button
+            android:id="@+id/btn4"
+            android:text="Kalkulator"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:textColor="#FFFFFF"
+            android:textSize="11sp"
+            android:backgroundTint="#1B5E20" />
+
+    </LinearLayout>
+
+</LinearLayout>
